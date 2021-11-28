@@ -1,0 +1,23 @@
+CREATE DATABASE storeDB;
+USE storeDB;
+
+
+CREATE TABLE `storeInfo` (
+  `sku` int NOT NULL AUTO_INCREMENT,
+  `name` text,
+  `price` int DEFAULT '0',
+  `stock` int DEFAULT '0',
+  
+  
+  PRIMARY KEY (`sku`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `userInfo` (
+  `userNumID` int NOT NULL AUTO_INCREMENT,
+  `email` varchar(50) NOT NULL,
+  `pin_number` int NOT NULL,
+  `balance` int DEFAULT '0',
+  
+  
+  PRIMARY KEY (`userNumID`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;

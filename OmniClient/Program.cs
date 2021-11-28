@@ -1,4 +1,7 @@
-﻿
+﻿using System;
+using MySql.Data.MySqlClient;
+using Org.BouncyCastle.Crypto.Tls;
+
 namespace OmniClient;
 
 internal static class Program
@@ -12,8 +15,38 @@ internal static class Program
     //UI
     private static void UIStart()
     {
-        //Login method here, check database for existing name. If it doesn't exist, let the user create a new one.
-        //Log into the users account
+                                                           
+        Console.WriteLine("Welcome to the C# Technology Store!");
+        Console.WriteLine("We'll need some database information first :)");
+        
+        
+
+                                                                // Gets server info from user inputs, and tests the
+                                                                // connection to the server
+        while (true)
+        {
+            string myConnectionString = StoreCommunicator.getConnectionString();
+            if (StoreCommunicator.testConnection(myConnectionString)) break;
+        }
+
+
+
+        while (true)
+        {
+            Console.WriteLine("1 - Login");
+            Console.WriteLine("2 - Register / Signup");
+            string? userChoice = Console.ReadLine();
+            if (userChoice == "1" || userChoice == "2") break;
+        }
+        
+        // 1 - try to log into DB with the email and pin
+        // 2 - signup with the new account information
+        
+
+        
+        
+        
+        
         
         Console.WriteLine("Welcome to the C# Technology Store!");
         Console.WriteLine("----------------------------------------");
@@ -30,4 +63,7 @@ internal static class Program
         
 
     }
+    
+    
+    
 }
