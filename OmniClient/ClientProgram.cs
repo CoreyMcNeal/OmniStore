@@ -27,7 +27,8 @@ internal static class ClientProgram
         
                                                                 // Gets server info from user inputs, and tests the
                                                                 // connection to the server. Breaks if connection is made
-        storeCommunicator.SetupAndTestConnection();
+         
+        string?[] serverInformation = storeCommunicator.SetupAndTestConnection();
 
 
                                                             //Gathers whether the user wants to make a new account or login
@@ -38,20 +39,32 @@ internal static class ClientProgram
             Console.WriteLine("1 - Login");
             Console.WriteLine("2 - Register / Signup");
             userChoice = Console.ReadLine();
-            if (userChoice is "1" or "2") break;
+            if (userChoice != "1" && userChoice != "2") continue;
+            
+            switch (userChoice)
+            {
+                case "1":
+                    //Code here for Login, maybe condense into method
+                    while (true)
+                    {
+                        if (storeCommunicator.LoginDatabase(serverInformation[0], serverInformation[1],
+                                serverInformation[2], serverInformation[3]))
+                        {
+                            return;
+                        }
+                        
+                        break;
+                    }
+                    
+                    continue;
+                
+                case "2":
+                    //Code here for Signup
+                    break;
+            }
+            
         }
 
-
-        switch (userChoice)
-        {
-            case "1":
-                //Code here for Login
-                break;
-            case "2":
-                //Code here for Signup
-                break;
-        }
-        
         // 1 - try to log into DB with the email and pin
         // 2 - signup with the new account information
         

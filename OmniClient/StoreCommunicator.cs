@@ -64,14 +64,66 @@ public class StoreCommunicator
     }
 
 
-
-    public void loginDatabase()
+    //Attempts to login to database "userInfo". If the match exists, returns true. If not, return false.
+    public bool LoginDatabase(string? serverAddress, string? nameDatabase, string? usernameDatabase, string? passwordDatabase)
     {
-        Console.Write("Username: ");
         
+        Console.Write("Username: ");
+        //Gather user entry
+        string? username = Console.ReadLine();
+    
+        Console.Write("Password: ");
+        //Gather user password
+        string? password = Console.ReadLine();
+
+        //Check with SQL Database if entry is valid. If not, send user back to login/register options
+        string myConnectionString = $"Server={serverAddress};Database={nameDatabase};Uid={usernameDatabase};Pwd={passwordDatabase};";
+
+        using MySqlConnection myConn = new MySqlConnection(myConnectionString);
+        
+            myConn.Open();
+            try
+            {
+                using MySqlCommand myCmd = new MySqlCommand();
+                myCmd.Connection = myConn;
+                myCmd.CommandText = $"SELECT * FROM userInfo WHERE email='{username}' AND pin_number = '{password}';";
+
+                MySqlDataReader myReader = myCmd.ExecuteReader();
+                if (!myReader.HasRows)
+                {
+                    Console.WriteLine("User doesn't exist.");
+                    return false;
+                }
+
+                while (myReader.Read())
+                {
+                    Console.WriteLine($"Login successful.");
+                    return true;
+                }
+                myReader.Close();
+                
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+                
+
+
+
+
+
+
+
+        return true;
     }
 
-    public bool SetupAndTestConnection()
+    // public bool attemptLogin()
+    // {
+    //     
+    // }
+
+    public string?[] SetupAndTestConnection()
     {
         while (true)
         {
@@ -112,7 +164,7 @@ public class StoreCommunicator
                 myConn.Open();
                 Console.WriteLine("Connected!");
                 myConn.Close();
-                return true;
+                return new string?[] {serverName, databaseName, databaseUsername, databasePassword};
             }
             catch (Exception e)
             {
