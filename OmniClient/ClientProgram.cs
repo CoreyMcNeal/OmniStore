@@ -4,10 +4,15 @@ using Org.BouncyCastle.Crypto.Tls;
 
 namespace OmniClient;
 
-internal static class Program
+//Remember to add note in readme about downloading the MYSQL package for the appropriate classes
+
+internal static class ClientProgram
 {
+    private static StoreCommunicator storeCommunicator;
+    
     public static void Main(string[] args)
     {
+        storeCommunicator = new StoreCommunicator();
         UIStart();
     }
 
@@ -18,25 +23,33 @@ internal static class Program
                                                            
         Console.WriteLine("Welcome to the C# Technology Store!");
         Console.WriteLine("We'll need some database information first :)");
-        
-        
 
+        
                                                                 // Gets server info from user inputs, and tests the
-                                                                // connection to the server
-        while (true)
-        {
-            string myConnectionString = StoreCommunicator.getConnectionString();
-            if (StoreCommunicator.testConnection(myConnectionString)) break;
-        }
+                                                                // connection to the server. Breaks if connection is made
+        storeCommunicator.SetupAndTestConnection();
 
 
-
+                                                            //Gathers whether the user wants to make a new account or login
+                                                            //Breaks when valid entry is made
+        string? userChoice;
         while (true)
         {
             Console.WriteLine("1 - Login");
             Console.WriteLine("2 - Register / Signup");
-            string? userChoice = Console.ReadLine();
-            if (userChoice == "1" || userChoice == "2") break;
+            userChoice = Console.ReadLine();
+            if (userChoice is "1" or "2") break;
+        }
+
+
+        switch (userChoice)
+        {
+            case "1":
+                //Code here for Login
+                break;
+            case "2":
+                //Code here for Signup
+                break;
         }
         
         // 1 - try to log into DB with the email and pin

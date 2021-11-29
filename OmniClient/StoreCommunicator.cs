@@ -62,13 +62,51 @@ public class StoreCommunicator
 
         Console.ReadKey();
     }
-    
-    
-    
 
-    public static bool testConnection(string myConnectionString)
+
+
+    public void loginDatabase()
     {
-        using MySqlConnection myConn = new MySqlConnection(myConnectionString);
+        Console.Write("Username: ");
+        
+    }
+
+    public bool SetupAndTestConnection()
+    {
+        while (true)
+        {
+            string? serverName;
+            string? databaseName;
+            string? databaseUsername;
+            string? databasePassword;
+            while (true)
+            {
+                Console.Write("Server Name: ");
+                serverName = Console.ReadLine();
+                if (!checkEmpty(serverName)) continue;
+                //Usually localhost
+        
+                Console.Write("Database Name: ");
+                databaseName = Console.ReadLine();
+                if (!checkEmpty(databaseName)) continue;
+                //take in database name
+        
+                Console.Write("Database UserName: ");
+                databaseUsername = Console.ReadLine();
+                if (!checkEmpty(databaseUsername)) continue;
+                //Take in server name
+        
+                Console.Write("Database Password: ");
+                databasePassword = Console.ReadLine();
+                if (!checkEmpty(databasePassword)) continue;
+                //take in database name
+
+                break;
+            }
+        
+            string myConnectionString = $"Server={serverName};Database={databaseName};Uid={databaseUsername};Pwd={databasePassword};";
+        
+            using MySqlConnection myConn = new MySqlConnection(myConnectionString);
             try
             {
                 myConn.Open();
@@ -78,49 +116,15 @@ public class StoreCommunicator
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                // Console.WriteLine(e);
                 Console.WriteLine("Failed to Connect!");
-                return false;
+                
             }
-    }
-    
-    public static string getConnectionString()
-    {
-        string? serverName;
-        string? databaseName;
-        string? databaseUsername;
-        string? databasePassword;
-        while (true)
-        {
-            Console.Write("Server Name: ");
-            serverName = Console.ReadLine();
-            if (!checkEmpty(serverName)) continue;
-            //Usually localhost
-        
-            Console.Write("Database Name: ");
-            databaseName = Console.ReadLine();
-            if (!checkEmpty(databaseName)) continue;
-            //take in database name
-        
-            Console.Write("Database UserName: ");
-            databaseUsername = Console.ReadLine();
-            if (!checkEmpty(databaseUsername)) continue;
-            //Take in server name
-        
-            Console.Write("Database Password: ");
-            databasePassword = Console.ReadLine();
-            if (!checkEmpty(databasePassword)) continue;
-            //take in database name
-
-            break;
         }
         
-        string myConnectionString = $"Server={serverName};Database={databaseName};Uid={databaseUsername};Pwd={databasePassword};";
-
-        return myConnectionString;
     }
-    
-    private static bool checkEmpty(string? entry)
+
+    private bool checkEmpty(string? entry)
     {
         if (!string.IsNullOrWhiteSpace(entry)) return true;
         
