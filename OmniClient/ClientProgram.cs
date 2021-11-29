@@ -58,9 +58,10 @@ internal static class ClientProgram
                     
                     continue;
                 
-                case "2":
+                case "2": 
                     //Code here for Signup
                     break;
+                
             }
             
         }
