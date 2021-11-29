@@ -1,28 +1,18 @@
 
-using System;
-using System.Data.SqlClient;
-using MySql.Data;
 using MySql.Data.MySqlClient;
 
 namespace OmniClient;
 
 public class StoreCommunicator
 {
-
-    public StoreCommunicator()
-    {
         //Remember to add SQLClient download through nuget in the readme on github
         //Check for user login info, validate that it exists with username and password matching
         
         //When item is chosen to buy, check if the store has stock, if it does. remove one from the stock amount. If
         //not, let the user know theres not stock remaining for that item.
-        
-       
-        
-        
-    }
 
-    public static void Login()
+
+        public static void Login()
     {
         const string serverAddress = "localhost";
         const string databaseName = "storeDB";
@@ -45,7 +35,7 @@ public class StoreCommunicator
 
                     while (myReader.Read())
                     {
-                        Console.WriteLine($"email: {myReader["email"].ToString()}");
+                        Console.WriteLine($"email: {myReader["email"]}");
                     }
                     myReader.Close();
                     
@@ -65,7 +55,7 @@ public class StoreCommunicator
 
 
     //Attempts to login to database "userInfo". If the match exists, returns true. If not, return false.
-    public bool LoginDatabase(string? serverAddress, string? nameDatabase, string? usernameDatabase, string? passwordDatabase)
+    public string[] LoginDatabase(string? serverAddress, string? nameDatabase, string? usernameDatabase, string? passwordDatabase)
     {
         
         Console.Write("Username: ");
@@ -91,14 +81,20 @@ public class StoreCommunicator
                 MySqlDataReader myReader = myCmd.ExecuteReader();
                 if (!myReader.HasRows)
                 {
+                    
                     Console.WriteLine("User doesn't exist.");
-                    return false;
+                    string[] userAndPin = {"", "", "false"};
+                    return userAndPin;
+                    
                 }
 
                 while (myReader.Read())
                 {
+                    
                     Console.WriteLine($"Login successful.");
-                    return true;
+                    string[] userAndPin = {username!, password!, "true"};
+                    return userAndPin;
+                    
                 }
                 myReader.Close();
                 
@@ -106,22 +102,40 @@ public class StoreCommunicator
             catch (Exception e)
             {
                 Console.WriteLine(e);
+                string[] userAndPin = {"","", "error"};
+                return userAndPin;
             }
-                
 
-
-
-
-
-
-
-        return true;
+            
+            
+            return Array.Empty<string>();
     }
 
-    // public bool attemptLogin()
-    // {
-    //     
-    // }
+    public bool registerDatabase()
+    {
+        while (true)
+        {
+            Console.Write("Enter Email: ");
+            //Gather email
+            
+            
+            
+            //Check if email already exists in database
+            
+            
+            
+            Console.Write("Enter Pin");
+            //Gather PIN
+            
+            
+            
+            //Add email and pin to userinfo database
+            
+            
+        }
+    }
+    
+    
 
     public string?[] SetupAndTestConnection()
     {
@@ -164,11 +178,11 @@ public class StoreCommunicator
                 myConn.Open();
                 Console.WriteLine("Connected!");
                 myConn.Close();
-                return new string?[] {serverName, databaseName, databaseUsername, databasePassword};
+                return new [] {serverName, databaseName, databaseUsername, databasePassword};
             }
             catch (Exception e)
             {
-                // Console.WriteLine(e);
+                Console.WriteLine(e);
                 Console.WriteLine("Failed to Connect!");
                 
             }
