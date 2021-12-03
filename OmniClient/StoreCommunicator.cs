@@ -10,52 +10,64 @@ public class StoreCommunicator
         
         //When item is chosen to buy, check if the store has stock, if it does. remove one from the stock amount. If
         //not, let the user know theres not stock remaining for that item.
+    
 
-
-        public static void Login()
+        
+    public static string?[] SetupAndTestConnection()
     {
-        const string serverAddress = "localhost";
-        const string databaseName = "storeDB";
-        const string databaseUsername = "root";
-        const string databasePassword = "cm117670";
-        string myConnectionString = $"Server={serverAddress};Database={databaseName};Uid={databaseUsername};Pwd={databasePassword};";
-
-        using (MySqlConnection myConn = new MySqlConnection(myConnectionString))
+        while (true)
         {
-            myConn.Open();
+            string? serverName;
+            string? databaseName;
+            string? databaseUsername;
+            string? databasePassword;
+            while (true)
+            {
+                Console.Write("Server Name: ");
+                serverName = Console.ReadLine();
+                if (!CheckEmpty(serverName)) continue;
+                //Usually localhost
+    
+                Console.Write("Database Name: ");
+                databaseName = Console.ReadLine();
+                if (!CheckEmpty(databaseName)) continue;
+                //take in database name
+    
+                Console.Write("Database UserName: ");
+                databaseUsername = Console.ReadLine();
+                if (!CheckEmpty(databaseUsername)) continue;
+                //Take in server name
+    
+                Console.Write("Database Password: ");
+                databasePassword = Console.ReadLine();
+                if (!CheckEmpty(databasePassword)) continue;
+                //take in database name
+
+                break;
+            }
+    
+            string myConnectionString = $"Server={serverName};Database={databaseName};Uid={databaseUsername};Pwd={databasePassword};";
+    
+            using MySqlConnection myConn = new MySqlConnection(myConnectionString);
             try
             {
-                Console.WriteLine("Opened!");
-                
-                using MySqlCommand myCmd = new MySqlCommand();
-                    myCmd.Connection = myConn;
-                    myCmd.CommandText = "SELECT * FROM userInfo";
-
-                    MySqlDataReader myReader = myCmd.ExecuteReader();
-
-                    while (myReader.Read())
-                    {
-                        Console.WriteLine($"email: {myReader["email"]}");
-                    }
-                    myReader.Close();
-                    
+                myConn.Open();
+                Console.WriteLine("Connected!");
+                myConn.Close();
+                return new [] {serverName, databaseName, databaseUsername, databasePassword};
             }
             catch (Exception e)
             {
                 Console.WriteLine(e);
-                myConn.Close();
-                throw;
-            }
+                Console.WriteLine("Failed to Connect!");
             
-            myConn.Close();
+            }
         }
-
-        Console.ReadKey();
+    
     }
 
-
-    //Attempts to login to database "userInfo". If the match exists, returns true. If not, return false.
-    public string[] LoginDatabase(string? serverAddress, string? nameDatabase, string? usernameDatabase, string? passwordDatabase)
+    //Attempts to login to database "userInfo". If the match exists, returns true in array with info. If not, return false in array.
+    public static string[] LoginDatabase(string? serverAddress, string? nameDatabase, string? usernameDatabase, string? passwordDatabase)
     {
         
         Console.Write("Username: ");
@@ -111,20 +123,16 @@ public class StoreCommunicator
             return Array.Empty<string>();
     }
 
-    public bool RegisterDatabase(string? serverAddress, string? nameDatabase, string? usernameDatabase, string? passwordDatabase)
+    public static void RegisterDatabase(string? serverAddress, string? nameDatabase, string? usernameDatabase, string? passwordDatabase)
     {
         while (true)
         {
             //Gather email
-            Console.Write("Enter Email: ");
-            string? userEmail = Console.ReadLine();
+            string? userEmail = GetEmail();
 
             //Gather PIN
-            Console.Write("Enter Pin: ");
-            int passwordPin = Convert.ToInt32(Console.ReadLine());
-            //make sure pin is a 4 number positive int
-            
-            
+            int passwordPin = GetPin();
+
             string myConnectionString = $"Server={serverAddress};Database={nameDatabase};Uid={usernameDatabase};Pwd={passwordDatabase};";
 
             using MySqlConnection myConn = new MySqlConnection(myConnectionString);
@@ -143,14 +151,14 @@ public class StoreCommunicator
                         
                         CreateUserSqlStatement(myConnectionString, userEmail, passwordPin);
                         
-                        Console.WriteLine("User successfully created");
+                        Console.WriteLine("User successfully created. Login with the newly created account.");
                         myReader.Close();
-                        return true;
+                        return;
                     }
 
                     Console.WriteLine("User email is already registered, please try a new one.");
                     myReader.Close();
-                    return false;
+                    return;
 
 
                 }
@@ -161,70 +169,10 @@ public class StoreCommunicator
                 }
 
 
-
-
-                //Add email and pin to userinfo database
-
-
         }
     }
     
-    
-
-    public string?[] SetupAndTestConnection()
-    {
-        while (true)
-        {
-            string? serverName;
-            string? databaseName;
-            string? databaseUsername;
-            string? databasePassword;
-            while (true)
-            {
-                Console.Write("Server Name: ");
-                serverName = Console.ReadLine();
-                if (!checkEmpty(serverName)) continue;
-                //Usually localhost
-        
-                Console.Write("Database Name: ");
-                databaseName = Console.ReadLine();
-                if (!checkEmpty(databaseName)) continue;
-                //take in database name
-        
-                Console.Write("Database UserName: ");
-                databaseUsername = Console.ReadLine();
-                if (!checkEmpty(databaseUsername)) continue;
-                //Take in server name
-        
-                Console.Write("Database Password: ");
-                databasePassword = Console.ReadLine();
-                if (!checkEmpty(databasePassword)) continue;
-                //take in database name
-
-                break;
-            }
-        
-            string myConnectionString = $"Server={serverName};Database={databaseName};Uid={databaseUsername};Pwd={databasePassword};";
-        
-            using MySqlConnection myConn = new MySqlConnection(myConnectionString);
-            try
-            {
-                myConn.Open();
-                Console.WriteLine("Connected!");
-                myConn.Close();
-                return new [] {serverName, databaseName, databaseUsername, databasePassword};
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                Console.WriteLine("Failed to Connect!");
-                
-            }
-        }
-        
-    }
-
-    private void CreateUserSqlStatement(string sqlConnectionString, string? userEmail, int passwordPin)
+    private static void CreateUserSqlStatement(string sqlConnectionString, string? userEmail, int passwordPin)
     {
         using MySqlConnection myConn = new MySqlConnection(sqlConnectionString);
                 
@@ -246,13 +194,58 @@ public class StoreCommunicator
             }
     }
 
-    private bool checkEmpty(string? entry)
+    
+    
+    
+    
+    
+    
+    private static bool CheckEmpty(string? entry)
     {
         if (!string.IsNullOrWhiteSpace(entry)) return true;
         
         Console.WriteLine("Empty entry detected, please make a valid entry");
         return false;
 
+    }
+    
+    private static string GetEmail()
+    {
+        while (true)
+        {
+            Console.Write("Enter UserEmail: ");
+
+            string? useremail = Console.ReadLine();
+            if (useremail == null || useremail.Contains(' ') || !useremail.Contains('@'))
+            {
+                Console.WriteLine("Please enter a valid formatted email.");
+                continue;
+            }
+
+            return useremail;
+
+        }
+    }
+    
+    private static int GetPin()
+    {
+        string? passwordPin;
+        while (true)
+        {
+            Console.Write("Enter Pin: ");
+            
+            passwordPin = Console.ReadLine();
+            if (passwordPin == null || passwordPin.Contains('-') || passwordPin.Contains(' ') || passwordPin.Length >= 8)
+            {
+                Console.WriteLine("Please enter a positive number with no spaces, less than 8 numbers long.");
+                continue;
+            }
+
+            break;
+        }
+
+        int passwordRealPin = Convert.ToInt32(passwordPin);
+        return passwordRealPin;
     }
     
     
