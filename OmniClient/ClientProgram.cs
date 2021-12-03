@@ -3,7 +3,7 @@ namespace OmniClient;
 
 //Remember to add note in readme about downloading the MYSQL package for the appropriate classes
 
-internal static class ClientProgram
+public static class ClientProgram
 {
     private static StoreCommunicator _storeCommunicator;
     
@@ -79,8 +79,13 @@ internal static class ClientProgram
             else if (userChoice == "2")
             {
                 //Code here for registering
-                //Loop back into "1" to properly login and return login credentials
-                
+                //Go back into "1" to properly login and return login credentials
+                bool result = _storeCommunicator.RegisterDatabase(serverInformation[0],
+                                                                    serverInformation[1],
+                                                                    serverInformation[2],
+                                                                    serverInformation[3]);
+
+
             }
             
             

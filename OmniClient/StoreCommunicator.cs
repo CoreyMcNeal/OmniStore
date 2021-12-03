@@ -68,35 +68,35 @@ public class StoreCommunicator
 
         //Check with SQL Database if entry is valid. If not, send user back to login/register options
         string myConnectionString = $"Server={serverAddress};Database={nameDatabase};Uid={usernameDatabase};Pwd={passwordDatabase};";
-
+        
         using MySqlConnection myConn = new MySqlConnection(myConnectionString);
         
             myConn.Open();
             try
             {
                 using MySqlCommand myCmd = new MySqlCommand();
-                myCmd.Connection = myConn;
-                myCmd.CommandText = $"SELECT * FROM userInfo WHERE email='{username}' AND pin_number = '{password}';";
+                    myCmd.Connection = myConn;
+                    myCmd.CommandText = $"SELECT * FROM userInfo WHERE email='{username}' AND pin_number = '{password}';";
 
-                MySqlDataReader myReader = myCmd.ExecuteReader();
-                if (!myReader.HasRows)
-                {
-                    
-                    Console.WriteLine("User doesn't exist.");
-                    string[] userAndPin = {"", "", "false"};
-                    return userAndPin;
-                    
-                }
+                    MySqlDataReader myReader = myCmd.ExecuteReader();
+                    if (!myReader.HasRows)
+                    {
+                        
+                        Console.WriteLine("User doesn't exist.");
+                        string[] userAndPin = {"", "", "false"};
+                        return userAndPin;
+                        
+                    }
 
-                while (myReader.Read())
-                {
-                    
-                    Console.WriteLine($"Login successful.");
-                    string[] userAndPin = {username!, password!, "true"};
-                    return userAndPin;
-                    
-                }
-                myReader.Close();
+                    while (myReader.Read())
+                    {
+                        
+                        Console.WriteLine($"Login successful.");
+                        string[] userAndPin = {username!, password!, "true"};
+                        return userAndPin;
+                        
+                    }
+                    myReader.Close();
                 
             }
             catch (Exception e)
@@ -111,27 +111,61 @@ public class StoreCommunicator
             return Array.Empty<string>();
     }
 
-    public bool registerDatabase()
+    public bool RegisterDatabase(string? serverAddress, string? nameDatabase, string? usernameDatabase, string? passwordDatabase)
     {
         while (true)
         {
-            Console.Write("Enter Email: ");
             //Gather email
-            
-            
-            
-            //Check if email already exists in database
-            
-            
-            
-            Console.Write("Enter Pin");
+            Console.Write("Enter Email: ");
+            string? userEmail = Console.ReadLine();
+
             //Gather PIN
+            Console.Write("Enter Pin: ");
+            int passwordPin = Convert.ToInt32(Console.ReadLine());
+            //make sure pin is a 4 number positive int
             
             
-            
-            //Add email and pin to userinfo database
-            
-            
+            string myConnectionString = $"Server={serverAddress};Database={nameDatabase};Uid={usernameDatabase};Pwd={passwordDatabase};";
+
+            using MySqlConnection myConn = new MySqlConnection(myConnectionString);
+                
+                myConn.Open();
+                try
+                {
+                    using MySqlCommand myCmd = new MySqlCommand();
+
+                    myCmd.Connection = myConn;
+                    myCmd.CommandText = $"SELECT * FROM userInfo WHERE email='{userEmail}';";
+
+                    MySqlDataReader myReader = myCmd.ExecuteReader();
+                    if (!myReader.HasRows)
+                    {
+                        
+                        CreateUserSqlStatement(myConnectionString, userEmail, passwordPin);
+                        
+                        Console.WriteLine("User successfully created");
+                        myReader.Close();
+                        return true;
+                    }
+
+                    Console.WriteLine("User email is already registered, please try a new one.");
+                    myReader.Close();
+                    return false;
+
+
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    throw;
+                }
+
+
+
+
+                //Add email and pin to userinfo database
+
+
         }
     }
     
@@ -188,6 +222,28 @@ public class StoreCommunicator
             }
         }
         
+    }
+
+    private void CreateUserSqlStatement(string sqlConnectionString, string? userEmail, int passwordPin)
+    {
+        using MySqlConnection myConn = new MySqlConnection(sqlConnectionString);
+                
+            myConn.Open();
+            try
+            {
+                using MySqlCommand myCmd = new MySqlCommand();
+
+                myCmd.Connection = myConn;
+                myCmd.CommandText = $"INSERT INTO userInfo VALUES (NULL, '{userEmail}', {passwordPin}, 0);";
+                MySqlDataReader myReader = myCmd.ExecuteReader();
+                myReader.Close();
+
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
     }
 
     private bool checkEmpty(string? entry)
