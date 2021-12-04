@@ -9,7 +9,6 @@ public static class ClientProgram
     
     public static void Main(string[] args)
     {
-        _storeCommunicator = new StoreCommunicator();
         UiStart();
     }
 
@@ -42,11 +41,16 @@ public static class ClientProgram
         Console.WriteLine("1 - Go Shopping");
         Console.WriteLine("2 - Load Card");
         string? menuChoice = MainMenuChoice();
+        Console.WriteLine("\n");
 
         switch (menuChoice)
         {
             case "1":
                 //Method here to go shopping
+                StoreCommunicator.ShowShelf(serverInformation, credentials);
+                Console.WriteLine("Enter product ID of the product you want to buy");
+                Console.Write("::");
+                
                 break;
             
             case "2":

@@ -206,7 +206,7 @@ public class StoreCommunicator
 
 
 
-    public static void getStoreShelfList(string[] serverInformation, string[] credentials)
+    public static void GoShopping(string[] serverInformation, string[] credentials)
     {
         //Get server info from earlier steps
         //Get login info from earlier steps
@@ -219,12 +219,50 @@ public class StoreCommunicator
         string databaseName = "storeInfo";
         string databaseUser = serverInformation[2];
         string databasePassword = serverInformation[3];
-        
-        // In Progress --
-    }
-    
-    
 
+        
+    }
+
+
+    public static void ShowShelf( string?[] serverInformation,string[] credentials)
+    {
+        string myConnectionString = $"Server={serverInformation[0]};Database={serverInformation[1]};Uid={serverInformation[2]};Pwd={serverInformation[3]};";
+
+        using MySqlConnection myConn = new MySqlConnection(myConnectionString);
+            myConn.Open();
+
+            try
+            {
+                MySqlCommand myCmd = new MySqlCommand();
+                myCmd.Connection = myConn;
+                myCmd.CommandText = $"SELECT * FROM storeInfo;";
+
+                MySqlDataReader myReader = myCmd.ExecuteReader();
+                if (!myReader.HasRows)
+                {
+                    Console.WriteLine("Shelf (Database) is empty");
+                    return;
+                }
+
+                while (myReader.Read())
+                {
+                    Console.WriteLine($"ID: {myReader["sku"]}");
+                    Console.WriteLine($"Product: {myReader["name"]}");
+                    Console.WriteLine($"Stock: {myReader["stock"]}");
+                    Console.WriteLine($"Price: ${myReader["price"]}");
+                    Console.WriteLine();
+
+                }
+                myReader.Close();
+                
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                Console.WriteLine("Error trying to execute SQL Command");
+                throw;
+            }
+    }
 
     //Checks if entry is empty
     private static bool CheckEmpty(string? entry)
