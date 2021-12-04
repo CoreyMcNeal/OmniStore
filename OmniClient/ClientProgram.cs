@@ -52,6 +52,7 @@ public static class ClientProgram
             case "2":
                 //method here to go load card with money
                 break;
+            
         }
 
         // 1 - Retrieve items, pricing, and stock from the sql server
@@ -65,6 +66,8 @@ public static class ClientProgram
     }
 
 
+    
+    
     private static string[] LoginOrSignup(string?[] serverInformation)
     {
         while (true)

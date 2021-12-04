@@ -12,7 +12,8 @@ public class StoreCommunicator
         //not, let the user know theres not stock remaining for that item.
     
 
-        
+                                                                //Tests whether the database information actually connects
+                                                                //to a database, returns successful server information
     public static string?[] SetupAndTestConnection()
     {
         while (true)
@@ -66,7 +67,9 @@ public class StoreCommunicator
     
     }
 
-    //Attempts to login to database "userInfo". If the match exists, returns true in array with info. If not, return false in array.
+    
+                                                                //Attempts to login to database "userInfo". If the match exists,
+                                                                //returns true in array with info. If not, return false in array.
     public static string[] LoginDatabase(string? serverAddress, string? nameDatabase, string? usernameDatabase, string? passwordDatabase)
     {
         
@@ -123,6 +126,11 @@ public class StoreCommunicator
             return Array.Empty<string>();
     }
 
+    
+    
+    
+    
+                                                                    //Process to create user in database
     public static void RegisterDatabase(string? serverAddress, string? nameDatabase, string? usernameDatabase, string? passwordDatabase)
     {
         while (true)
@@ -172,6 +180,8 @@ public class StoreCommunicator
         }
     }
     
+    
+                                                                    //Executes SQL statement to create user in Database                                               
     private static void CreateUserSqlStatement(string sqlConnectionString, string? userEmail, int passwordPin)
     {
         using MySqlConnection myConn = new MySqlConnection(sqlConnectionString);
@@ -194,12 +204,29 @@ public class StoreCommunicator
             }
     }
 
+
+
+    public static void getStoreShelfList(string[] serverInformation, string[] credentials)
+    {
+        //Get server info from earlier steps
+        //Get login info from earlier steps
+        //pass both into this method, as two string arrays
+
+        string username = credentials[0];
+        string passwordPin = credentials[1];
+
+        string serverName = serverInformation[0];
+        string databaseName = "storeInfo";
+        string databaseUser = serverInformation[2];
+        string databasePassword = serverInformation[3];
+        
+        // In Progress --
+    }
     
     
-    
-    
-    
-    
+
+
+    //Checks if entry is empty
     private static bool CheckEmpty(string? entry)
     {
         if (!string.IsNullOrWhiteSpace(entry)) return true;
@@ -209,6 +236,7 @@ public class StoreCommunicator
 
     }
     
+                                                        //Process to get and return email from user
     private static string GetEmail()
     {
         while (true)
@@ -227,6 +255,7 @@ public class StoreCommunicator
         }
     }
     
+                                                        //Process to get and return pin from user
     private static int GetPin()
     {
         string? passwordPin;
