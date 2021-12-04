@@ -377,7 +377,17 @@ public class StoreCommunicator
                 return -1;
     }
 
-    public static string[] GetAllIds(string[] serverInformation)
+    public static string GetUserProductId(string[] serverInformation)
+    {
+        string? id = Console.ReadLine();
+        List<string> storeIds = GetAllIds(serverInformation);
+        if (!storeIds.Contains(id)) { return "";}
+
+        return id;
+
+    }
+    
+    private static List<string> GetAllIds(string[] serverInformation)
     {
         string myConnectionString = $"Server={serverInformation[0]};Database={serverInformation[1]};" +
                                     $"Uid={serverInformation[2]};Pwd={serverInformation[3]};";
@@ -389,17 +399,12 @@ public class StoreCommunicator
                 myCmd.Connection = myConn;
                 myCmd.CommandText = $"SELECT sku FROM storeInfo;";
 
-                string[] skuArray = Array.Empty<string>();
+                List<string> skuArray = new List<string>();
                 MySqlDataReader myReader = myCmd.ExecuteReader();
-                while (myReader.Read())
-                {
-                    
-                    Console.WriteLine($"{myReader["sku"]}");
-                    
-                }
-
+                
+                while (myReader.Read()) { skuArray.Add($"{myReader["sku"]}");}
+                
                 return skuArray;
-
-
     }
+    
 }

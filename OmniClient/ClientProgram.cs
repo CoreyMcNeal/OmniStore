@@ -77,13 +77,35 @@ public static class ClientProgram
         string databaseUser = serverInformation[2];
         string databasePassword = serverInformation[3];
         
-        StoreCommunicator.ShowShelf(serverInformation, credentials);
-        Console.WriteLine("Enter product ID of the product you want to buy. Enter \"Leave\" to return to menu.");
-        Console.Write("::");
+        string productId = "";
+        while (productId == "")
+        {
+            StoreCommunicator.ShowShelf(serverInformation, credentials);
+            Console.WriteLine("Enter product ID of the product you want to buy. Enter \"Leave\" to return to menu.");
+            Console.Write("::");
+            productId = StoreCommunicator.GetUserProductId(serverInformation);
+        }
         
+        //Add a check for the items price and a check for the users balance. Push the transaction if the balance is
+        //more than the item price
+
+        int itemPrice = StoreCommunicator.GetPrice(serverInformation, int.Parse(productId));
+        int balance = StoreCommunicator.GetBalance(serverInformation, credentials);
+
+        if (balance >= itemPrice)
+        {
+            //Method to purchase product goes here, subtract from balance too
+        }
+        else 
+        {
+            //Message that the user doesn't have enough, return to menu to load more onto card.
+        }
     }
+
     
     
+    
+
     private static string[] LoginOrSignup(string?[] serverInformation)
     {
         while (true)
