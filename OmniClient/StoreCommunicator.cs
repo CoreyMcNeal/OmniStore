@@ -149,24 +149,23 @@ public class StoreCommunicator
                 try
                 {
                     using MySqlCommand myCmd = new MySqlCommand();
+                        myCmd.Connection = myConn;
+                        myCmd.CommandText = $"SELECT * FROM userInfo WHERE email='{userEmail}';";
 
-                    myCmd.Connection = myConn;
-                    myCmd.CommandText = $"SELECT * FROM userInfo WHERE email='{userEmail}';";
+                        MySqlDataReader myReader = myCmd.ExecuteReader();
+                        if (!myReader.HasRows)
+                        {
+                            
+                            CreateUserSqlStatement(myConnectionString, userEmail, passwordPin);
+                            
+                            Console.WriteLine("User successfully created. Login with the newly created account.");
+                            myReader.Close();
+                            return;
+                        }
 
-                    MySqlDataReader myReader = myCmd.ExecuteReader();
-                    if (!myReader.HasRows)
-                    {
-                        
-                        CreateUserSqlStatement(myConnectionString, userEmail, passwordPin);
-                        
-                        Console.WriteLine("User successfully created. Login with the newly created account.");
+                        Console.WriteLine("User email is already registered, please try a new one.");
                         myReader.Close();
                         return;
-                    }
-
-                    Console.WriteLine("User email is already registered, please try a new one.");
-                    myReader.Close();
-                    return;
 
 
                 }
@@ -264,6 +263,15 @@ public class StoreCommunicator
             }
     }
 
+    public static void AttemptPurchase(string?[] serverInformation, string[] credentials)
+    {
+        //Get users balance
+        //Get price of desired item
+        //See if users balance is enough to get the item
+        //Take 1 away from the stock of item
+        
+    }
+
     //Checks if entry is empty
     private static bool CheckEmpty(string? entry)
     {
@@ -316,4 +324,71 @@ public class StoreCommunicator
     }
     
     
+
+                                                        //Gets balance from user in databse
+    public static int GetBalance(string?[] serverInformation,string[] credentials)
+    {
+        string myConnectionString = $"Server={serverInformation[0]};Database={serverInformation[1]};" +
+                                    $"Uid={serverInformation[2]};Pwd={serverInformation[3]};";
+
+        using MySqlConnection myConn = new MySqlConnection(myConnectionString);
+        
+            myConn.Open();
+            using MySqlCommand myCmd = new MySqlCommand();
+                myCmd.Connection = myConn;
+                myCmd.CommandText = $"SELECT balance FROM userInfo WHERE email='{credentials[0]}'" + 
+                                    " AND pin_number='{credentials[1]}';";
+                
+                MySqlDataReader myReader = myCmd.ExecuteReader();
+                while (myReader.Read())
+                {
+                    return (int) myReader["balance"];
+                }
+
+                return -1;
+    }
+
+                                                        //Gets item price from store in database
+    public static int GetPrice(string?[] serverInformation, int productId)
+    {
+        
+        string myConnectionString = $"Server={serverInformation[0]};Database={serverInformation[1]};" +
+                                    $"Uid={serverInformation[2]};Pwd={serverInformation[3]};";
+
+        using MySqlConnection myConn = new MySqlConnection(myConnectionString);
+        
+            myConn.Open();
+            using MySqlCommand myCmd = new MySqlCommand();
+                myCmd.Connection = myConn;
+                myCmd.CommandText = $"SELECT price FROM storeInfo WHERE sku='{productId}';";
+                        
+                MySqlDataReader myReader = myCmd.ExecuteReader();
+                while (myReader.Read())
+                {
+                    return (int) myReader["price"];
+                }
+
+                return -1;
+    }
+                                                        //Gets item stock from store in database
+    public static int GetStock(string[] serverInformation, int productId)
+    {
+        string myConnectionString = $"Server={serverInformation[0]};Database={serverInformation[1]};" +
+                                    $"Uid={serverInformation[2]};Pwd={serverInformation[3]};";
+
+        using MySqlConnection myConn = new MySqlConnection(myConnectionString);
+        
+            myConn.Open();
+            using MySqlCommand myCmd = new MySqlCommand();
+                myCmd.Connection = myConn;
+                myCmd.CommandText = $"SELECT stock FROM storeInfo WHERE sku='{productId}';";
+                                
+                MySqlDataReader myReader = myCmd.ExecuteReader();
+                while (myReader.Read())
+                {
+                    return (int) myReader["stock"];
+                }
+
+                return -1;
+    }
 }
