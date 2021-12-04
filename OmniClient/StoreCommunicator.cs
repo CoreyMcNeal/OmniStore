@@ -205,22 +205,7 @@ public class StoreCommunicator
 
 
 
-    public static void GoShopping(string[] serverInformation, string[] credentials)
-    {
-        //Get server info from earlier steps
-        //Get login info from earlier steps
-        //pass both into this method, as two string arrays
 
-        string username = credentials[0];
-        string passwordPin = credentials[1];
-
-        string serverName = serverInformation[0];
-        string databaseName = "storeInfo";
-        string databaseUser = serverInformation[2];
-        string databasePassword = serverInformation[3];
-
-        
-    }
 
 
     public static void ShowShelf( string?[] serverInformation,string[] credentials)
@@ -390,5 +375,31 @@ public class StoreCommunicator
                 }
 
                 return -1;
+    }
+
+    public static string[] GetAllIds(string[] serverInformation)
+    {
+        string myConnectionString = $"Server={serverInformation[0]};Database={serverInformation[1]};" +
+                                    $"Uid={serverInformation[2]};Pwd={serverInformation[3]};";
+
+        using MySqlConnection myConn = new MySqlConnection(myConnectionString);
+        
+            myConn.Open();
+            using MySqlCommand myCmd = new MySqlCommand();
+                myCmd.Connection = myConn;
+                myCmd.CommandText = $"SELECT sku FROM storeInfo;";
+
+                string[] skuArray = Array.Empty<string>();
+                MySqlDataReader myReader = myCmd.ExecuteReader();
+                while (myReader.Read())
+                {
+                    
+                    Console.WriteLine($"{myReader["sku"]}");
+                    
+                }
+
+                return skuArray;
+
+
     }
 }

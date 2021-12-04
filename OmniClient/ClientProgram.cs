@@ -47,10 +47,7 @@ public static class ClientProgram
         {
             case "1":
                 //Method here to go shopping
-                StoreCommunicator.ShowShelf(serverInformation, credentials);
-                Console.WriteLine("Enter product ID of the product you want to buy");
-                Console.Write("::");
-                
+                GoShopping(serverInformation!, credentials);
                 break;
             
             case "2":
@@ -69,7 +66,22 @@ public static class ClientProgram
 
     }
 
+    private static void GoShopping(string[] serverInformation, string[] credentials)
+    {
 
+        string username = credentials[0];
+        string passwordPin = credentials[1];
+
+        string serverName = serverInformation[0];
+        string databaseName = "storeInfo";
+        string databaseUser = serverInformation[2];
+        string databasePassword = serverInformation[3];
+        
+        StoreCommunicator.ShowShelf(serverInformation, credentials);
+        Console.WriteLine("Enter product ID of the product you want to buy. Enter \"Leave\" to return to menu.");
+        Console.Write("::");
+        
+    }
     
     
     private static string[] LoginOrSignup(string?[] serverInformation)
@@ -131,4 +143,6 @@ public static class ClientProgram
         }
         
     }
+
+    
 }
