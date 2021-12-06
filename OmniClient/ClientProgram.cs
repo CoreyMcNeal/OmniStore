@@ -5,8 +5,7 @@ namespace OmniClient;
 
 public static class ClientProgram
 {
-    private static StoreCommunicator _storeCommunicator;
-    
+
     public static void Main(string[] args)
     {
         UiStart();
@@ -47,8 +46,9 @@ public static class ClientProgram
             Console.WriteLine($"BALANCE - ${balance}");
             Console.WriteLine("1 - Go Shopping");
             Console.WriteLine("2 - Load Card");
+            Console.WriteLine("3 - Leave");
             Console.Write("::");
-            string? menuChoice = MainMenuChoice();
+            string menuChoice = MainMenuChoice();
             Console.WriteLine("\n");
 
             switch (menuChoice)
@@ -56,15 +56,18 @@ public static class ClientProgram
                 case "1":
                     //Method here to go shopping
                     GoShopping(serverInformation!, credentials);
-                    
-                    break;
-            
+                    continue;
+
                 case "2":
                     //method here to go load card with money
                     GoLoadCard(serverInformation, credentials);
-                    break;
+                    continue;
             
+                case "3":
+                    break;
             }
+
+            break;
         }
 
     }
@@ -115,6 +118,7 @@ public static class ClientProgram
         else
         {
             Console.WriteLine($"Not enough money in account for purchase and item is out of stock.");
+            
         }
     }
 
@@ -199,7 +203,7 @@ public static class ClientProgram
         while (true)
         {
             string? menuChoice = Console.ReadLine();
-            if (menuChoice != "1" && menuChoice != "2")
+            if (menuChoice != "1" && menuChoice != "2" && menuChoice != "3")
             {
                 Console.WriteLine("Invalid entry. Please choose 1 to go shopping, or 2 to load your card.");
                 Console.Write(":::");
