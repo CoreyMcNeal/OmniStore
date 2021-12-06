@@ -21,3 +21,11 @@ CREATE TABLE `userInfo` (
   
   PRIMARY KEY (`userNumID`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+
+INSERT INTO storeInfo
+VALUES (NULL, 'Omni Phone', 500, 5),
+       (NULL, 'Omni TV', 700, 7),
+       (NULL, 'Omni Laptop', 600, 3),
+       (NULL, 'Omni Tablet', 400, 4),
+       (NULL, 'Omni Watch', 250, 5);
