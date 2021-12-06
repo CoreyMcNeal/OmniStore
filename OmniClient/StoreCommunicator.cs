@@ -26,21 +26,37 @@ public class StoreCommunicator
             {
                 Console.Write("Server Name: ");
                 serverName = Console.ReadLine();
+                if (serverName == "x")
+                {
+                    serverName = "localhost";
+                }
                 if (!CheckEmpty(serverName)) continue;
                 //Usually localhost
     
                 Console.Write("Database Name: ");
                 databaseName = Console.ReadLine();
+                if (databaseName == "x")
+                {
+                    databaseName = "storeDB";
+                }
                 if (!CheckEmpty(databaseName)) continue;
                 //take in database name
     
                 Console.Write("Database UserName: ");
                 databaseUsername = Console.ReadLine();
+                if (databaseUsername == "x")
+                {
+                    databaseUsername = "root";
+                }
                 if (!CheckEmpty(databaseUsername)) continue;
                 //Take in server name
     
                 Console.Write("Database Password: ");
                 databasePassword = Console.ReadLine();
+                if (databasePassword == "x")
+                {
+                    databasePassword = "cm117670";
+                }
                 if (!CheckEmpty(databasePassword)) continue;
                 //take in database name
 
@@ -321,9 +337,8 @@ public class StoreCommunicator
             myConn.Open();
             using MySqlCommand myCmd = new MySqlCommand();
                 myCmd.Connection = myConn;
-                myCmd.CommandText = $"SELECT balance FROM userInfo WHERE email='{credentials[0]}'" + 
-                                    " AND pin_number='{credentials[1]}';";
-                
+                myCmd.CommandText = $"SELECT balance FROM userInfo WHERE email='{credentials[0]}' AND pin_number='{credentials[1]}';";
+                                        
                 MySqlDataReader myReader = myCmd.ExecuteReader();
                 while (myReader.Read())
                 {
@@ -405,6 +420,22 @@ public class StoreCommunicator
                 while (myReader.Read()) { skuArray.Add($"{myReader["sku"]}");}
                 
                 return skuArray;
+    }
+
+    public static void AddToCard(string?[] serverInformation, string[] credentials, int amount)
+    {
+        string myConnectionString = $"Server={serverInformation[0]};Database={serverInformation[1]};" +
+                                    $"Uid={serverInformation[2]};Pwd={serverInformation[3]};";
+
+        int amountToAdd = (StoreCommunicator.GetBalance(serverInformation, credentials)) + amount;
+
+        using MySqlConnection myConn = new MySqlConnection(myConnectionString);
+            
+            myConn.Open();
+            using MySqlCommand myCmd = new MySqlCommand();
+                myCmd.Connection = myConn;
+                myCmd.CommandText = $"UPDATE userInfo SET balance={amountToAdd} WHERE email='{credentials[0]}' AND pin_number='{credentials[1]}' AND userNUMID > 0;";
+                MySqlDataReader myReader = myCmd.ExecuteReader();
     }
     
 }

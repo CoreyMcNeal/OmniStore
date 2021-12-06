@@ -30,58 +30,52 @@ public static class ClientProgram
         string[] credentials = LoginOrSignup(serverInformation);
         
         
-
+        
         //By this point, the user will have logged in and prog. grabbed the credentials, or made user made a new account
         //and prog grabbed the credentials
         
 
-
-        Console.WriteLine("Welcome to the C# Technology Store!");
-        Console.WriteLine("----------------------------------------");
-        Console.WriteLine("1 - Go Shopping");
-        Console.WriteLine("2 - Load Card");
-        string? menuChoice = MainMenuChoice();
         Console.WriteLine("\n");
+        Console.WriteLine("Welcome to the C# Technology Store!");
 
-        switch (menuChoice)
+
+        while (true)
         {
-            case "1":
-                //Method here to go shopping
-                GoShopping(serverInformation!, credentials);
-                break;
+            int balance = StoreCommunicator.GetBalance(serverInformation, credentials);
             
-            case "2":
-                //method here to go load card with money
-                break;
+            Console.WriteLine("----------------------------------------");
+            Console.WriteLine($"BALANCE - ${balance}");
+            Console.WriteLine("1 - Go Shopping");
+            Console.WriteLine("2 - Load Card");
+            Console.Write("::");
+            string? menuChoice = MainMenuChoice();
+            Console.WriteLine("\n");
+
+            switch (menuChoice)
+            {
+                case "1":
+                    //Method here to go shopping
+                    GoShopping(serverInformation!, credentials);
+                    break;
             
+                case "2":
+                    //method here to go load card with money
+                    GoLoadCard(serverInformation, credentials);
+                    break;
+            
+            }
         }
-
-        // 1 - Retrieve items, pricing, and stock from the sql server
-        // 2 - Retrieve items, pricing and stock from the sql server for the cart (could be built similar to store)
-        // 3 - Add money to the users account
-
-        //Check the users card balance when trying to checkout from the My Cart Section
-
-
 
     }
 
     private static void GoShopping(string[] serverInformation, string[] credentials)
     {
 
-        string username = credentials[0];
-        string passwordPin = credentials[1];
-
-        string serverName = serverInformation[0];
-        string databaseName = "storeInfo";
-        string databaseUser = serverInformation[2];
-        string databasePassword = serverInformation[3];
-        
         string productId = "";
         while (productId == "")
         {
             StoreCommunicator.ShowShelf(serverInformation, credentials);
-            Console.WriteLine("Enter product ID of the product you want to buy. Enter \"Leave\" to return to menu.");
+            Console.WriteLine("Enter product ID of the product you want to buy.");
             Console.Write("::");
             productId = StoreCommunicator.GetUserProductId(serverInformation);
         }
@@ -94,7 +88,13 @@ public static class ClientProgram
 
         if (balance >= itemPrice)
         {
-            //Method to purchase product goes here, subtract from balance too
+            //-purchase product
+            int newBalance = balance - itemPrice;
+            
+            //-subtract from balance
+
+
+
         }
         else 
         {
@@ -102,9 +102,39 @@ public static class ClientProgram
         }
     }
 
-    
-    
-    
+    private static void GoLoadCard(string?[] serverInformation, string[] credentials)
+    {
+        Console.WriteLine("How much would you like to add onto your store card?");
+        Console.Write("::$");
+        int amount = getAmount();
+        StoreCommunicator.AddToCard(serverInformation, credentials, amount);
+        Console.WriteLine($"${amount} added to store card.");
+    }
+
+    private static int getAmount()
+    {
+        while (true)
+        {
+            string? stringAmount = Console.ReadLine();
+            try
+            {
+                int amount = Convert.ToInt32(stringAmount);
+                
+                if (amount >= 1) return amount;
+                
+                Console.WriteLine("Enter a positive whole number please");
+                Console.Write("::$");
+                continue;
+
+                return amount;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Enter a positive whole number please.");
+                Console.Write("::$");
+            }
+        }
+    }
 
     private static string[] LoginOrSignup(string?[] serverInformation)
     {
@@ -112,6 +142,7 @@ public static class ClientProgram
         {
             Console.WriteLine("1 - Login");
             Console.WriteLine("2 - Register / Signup");
+            Console.Write("::");
             string? userChoice = Console.ReadLine();
             if (userChoice != "1" && userChoice != "2") continue;
 
