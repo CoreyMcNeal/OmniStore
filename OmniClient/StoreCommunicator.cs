@@ -327,7 +327,7 @@ public class StoreCommunicator
     
 
                                                         //Gets balance from user in databse
-    public static int GetBalance(string?[] serverInformation,string[] credentials)
+    public static int GetUserBalance(string?[] serverInformation,string[] credentials)
     {
         string myConnectionString = $"Server={serverInformation[0]};Database={serverInformation[1]};" +
                                     $"Uid={serverInformation[2]};Pwd={serverInformation[3]};";
@@ -346,6 +346,20 @@ public class StoreCommunicator
                 }
 
                 return -1;
+    }
+
+    public static void SetUserBalance(string?[] serverInformation, string[] credentials, int newBalance)
+    {
+        string myConnectionString = $"Server={serverInformation[0]};Database={serverInformation[1]};" +
+                                    $"Uid={serverInformation[2]};Pwd={serverInformation[3]};";
+
+        using MySqlConnection myConn = new MySqlConnection(myConnectionString);
+            
+            myConn.Open();
+            using MySqlCommand myCmd = new MySqlCommand();
+                myCmd.Connection = myConn;
+                myCmd.CommandText = $"UPDATE userInfo SET balance={newBalance} WHERE email='{credentials[0]}' AND pin_number='{credentials[1]}' AND userNUMID > 0;";
+                MySqlDataReader myReader = myCmd.ExecuteReader();
     }
 
                                                         //Gets item price from store in database
@@ -370,6 +384,28 @@ public class StoreCommunicator
 
                 return -1;
     }
+
+    public static string GetName(string?[] serverInformation, int productId)
+    {
+        string myConnectionString = $"Server={serverInformation[0]};Database={serverInformation[1]};" +
+                                    $"Uid={serverInformation[2]};Pwd={serverInformation[3]};";
+
+        using MySqlConnection myConn = new MySqlConnection(myConnectionString);
+        
+            myConn.Open();
+            using MySqlCommand myCmd = new MySqlCommand();
+                myCmd.Connection = myConn;
+                myCmd.CommandText = $"SELECT name FROM storeInfo WHERE sku='{productId}';";
+                                
+                MySqlDataReader myReader = myCmd.ExecuteReader();
+                while (myReader.Read())
+                {
+                    return (string)myReader["name"];
+                }
+
+                return "";
+    }
+    
                                                         //Gets item stock from store in database
     public static int GetStock(string[] serverInformation, int productId)
     {
@@ -390,6 +426,23 @@ public class StoreCommunicator
                 }
 
                 return -1;
+    }
+
+    public static void RemoveFromStock(string[] serverInformation, int productId)
+    {
+        int currentStock = StoreCommunicator.GetStock(serverInformation, productId);
+        int newStock = currentStock - 1;
+        
+        string myConnectionString = $"Server={serverInformation[0]};Database={serverInformation[1]};" +
+                                    $"Uid={serverInformation[2]};Pwd={serverInformation[3]};";
+
+            using MySqlConnection myConn = new MySqlConnection(myConnectionString);
+                
+                myConn.Open();
+                using MySqlCommand myCmd = new MySqlCommand();
+                    myCmd.Connection = myConn;
+                    myCmd.CommandText = $"UPDATE storeInfo SET stock={newStock} WHERE sku='{productId}' AND sku > 0;";
+                    MySqlDataReader myReader = myCmd.ExecuteReader();
     }
 
     public static string GetUserProductId(string[] serverInformation)
@@ -427,7 +480,7 @@ public class StoreCommunicator
         string myConnectionString = $"Server={serverInformation[0]};Database={serverInformation[1]};" +
                                     $"Uid={serverInformation[2]};Pwd={serverInformation[3]};";
 
-        int amountToAdd = (StoreCommunicator.GetBalance(serverInformation, credentials)) + amount;
+        int amountToAdd = (StoreCommunicator.GetUserBalance(serverInformation, credentials)) + amount;
 
         using MySqlConnection myConn = new MySqlConnection(myConnectionString);
             

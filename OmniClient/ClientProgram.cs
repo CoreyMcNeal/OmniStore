@@ -41,7 +41,7 @@ public static class ClientProgram
 
         while (true)
         {
-            int balance = StoreCommunicator.GetBalance(serverInformation, credentials);
+            int balance = StoreCommunicator.GetUserBalance(serverInformation, credentials);
             
             Console.WriteLine("----------------------------------------");
             Console.WriteLine($"BALANCE - ${balance}");
@@ -56,6 +56,7 @@ public static class ClientProgram
                 case "1":
                     //Method here to go shopping
                     GoShopping(serverInformation!, credentials);
+                    
                     break;
             
                 case "2":
@@ -84,21 +85,36 @@ public static class ClientProgram
         //more than the item price
 
         int itemPrice = StoreCommunicator.GetPrice(serverInformation, int.Parse(productId));
-        int balance = StoreCommunicator.GetBalance(serverInformation, credentials);
+        int balance = StoreCommunicator.GetUserBalance(serverInformation, credentials);
+        int stock = StoreCommunicator.GetStock(serverInformation, int.Parse(productId));
+        string itemName = StoreCommunicator.GetName(serverInformation, int.Parse(productId));
 
-        if (balance >= itemPrice)
+        if (balance >= itemPrice && stock > 0)
         {
-            //-purchase product
             int newBalance = balance - itemPrice;
+            StoreCommunicator.SetUserBalance(serverInformation, credentials, newBalance);
+            StoreCommunicator.RemoveFromStock(serverInformation, int.Parse(productId));
             
-            //-subtract from balance
-
-
+            Console.WriteLine($"${itemPrice} was removed from store account.");
+            Console.WriteLine($"{itemName} was purchased!");
 
         }
-        else 
+        else if (balance >= itemPrice && stock < 1)
         {
             //Message that the user doesn't have enough, return to menu to load more onto card.
+            Console.WriteLine($"{itemName} is out of stock.");
+            
+        }
+        else if (balance < itemPrice && stock > 0)
+        {
+            //Message that the user doesn't have enough, return to menu to load more onto card.
+            Console.WriteLine($"Not enough money in account for purchase. Load your card with more money " +
+                              $"at the main menu.");
+            
+        }
+        else
+        {
+            Console.WriteLine($"Not enough money in account for purchase and item is out of stock.");
         }
     }
 
