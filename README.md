@@ -5,7 +5,7 @@ The User must set up a local database using MySQL. The SQL Schema that is needed
 
 # Required
 - MySql.Data package
-- database admin user and password
+- Database admin user and password
 
 #How To Use
  - On entry, the server name, database name, database admin username, and database admin password wil be entered
