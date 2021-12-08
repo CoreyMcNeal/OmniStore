@@ -7,7 +7,7 @@ The User must set up a local database using MySQL. The SQL Schema that is needed
 - MySql.Data package
 - Database admin user and password
 
-#How To Use
+# How To Use
  - On entry, the server name, database name, database admin username, and database admin password wil be entered
  - The user may login with a registered username and PIN (Integers) from the database, optionally create a new account, or exit from the same screen
  - Upon login, user is greeted and shown three different options, Go Shopping, Load Card, or Leave.
@@ -15,7 +15,7 @@ The User must set up a local database using MySQL. The SQL Schema that is needed
  - Load Card takes the user to an interface to load money onto their store account.
  - Leave exits the user from the program
 
-#What I Learned
+# What I Learned
  - C# Syntax and Development
  - SQL Manipulation with the MySQL library in C#
  - SQL Setup in MySQLWorkbench
