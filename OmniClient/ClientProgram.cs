@@ -1,8 +1,6 @@
 ﻿
 namespace OmniClient;
 
-//Remember to add note in readme about downloading the MYSQL package for the appropriate classes
-
 public static class ClientProgram
 {
 
@@ -21,18 +19,13 @@ public static class ClientProgram
 
         
                                                                 // Gets server info from user inputs, and tests the
-                                                                // connection to the server. Breaks if connection is made
-        string?[] serverInformation = StoreCommunicator.SetupAndTestConnection();
+                                                                // connection to the server.
+        string?[] serverInformation = SetupAndTestConnection();
 
 
                                                                 //User logs in or makes a new account to log in with
         string[] credentials = LoginOrSignup(serverInformation);
-        
-        
-        
-        //By this point, the user will have logged in and prog. grabbed the credentials, or made user made a new account
-        //and prog grabbed the credentials
-        
+
 
         Console.WriteLine("\n");
         Console.WriteLine("Welcome to the C# Technology Store!");
@@ -40,7 +33,7 @@ public static class ClientProgram
 
         while (true)
         {
-            int balance = StoreCommunicator.GetUserBalance(serverInformation, credentials);
+            int balance = StoreCommunicator.GetUserBalance(serverInformation[4], credentials);
             
             Console.WriteLine("----------------------------------------");
             Console.WriteLine($"BALANCE - ${balance}");
@@ -54,12 +47,12 @@ public static class ClientProgram
             switch (menuChoice)
             {
                 case "1":
-                    //Method here to go shopping
+                    
                     GoShopping(serverInformation!, credentials);
                     continue;
 
                 case "2":
-                    //method here to go load card with money
+                    
                     GoLoadCard(serverInformation, credentials);
                     continue;
             
@@ -72,90 +65,56 @@ public static class ClientProgram
 
     }
 
-    private static void GoShopping(string[] serverInformation, string[] credentials)
+    private static string?[] SetupAndTestConnection()
     {
-
-        string productId = "";
-        while (productId == "")
-        {
-            StoreCommunicator.ShowShelf(serverInformation, credentials);
-            Console.WriteLine("Enter product ID of the product you want to buy.");
-            Console.Write("::");
-            productId = StoreCommunicator.GetUserProductId(serverInformation);
-        }
         
-        //Add a check for the items price and a check for the users balance. Push the transaction if the balance is
-        //more than the item price
-
-        int itemPrice = StoreCommunicator.GetPrice(serverInformation, int.Parse(productId));
-        int balance = StoreCommunicator.GetUserBalance(serverInformation, credentials);
-        int stock = StoreCommunicator.GetStock(serverInformation, int.Parse(productId));
-        string itemName = StoreCommunicator.GetName(serverInformation, int.Parse(productId));
-
-        if (balance >= itemPrice && stock > 0)
+        string?[] results = Array.Empty<string>();
+        while (results.Length == 0)
         {
-            int newBalance = balance - itemPrice;
-            StoreCommunicator.SetUserBalance(serverInformation, credentials, newBalance);
-            StoreCommunicator.RemoveFromStock(serverInformation, int.Parse(productId));
-            
-            Console.WriteLine($"${itemPrice} was removed from store account.");
-            Console.WriteLine($"{itemName} was purchased!");
-
-        }
-        else if (balance >= itemPrice && stock < 1)
-        {
-            //Message that the user doesn't have enough, return to menu to load more onto card.
-            Console.WriteLine($"{itemName} is out of stock.");
-            
-        }
-        else if (balance < itemPrice && stock > 0)
-        {
-            //Message that the user doesn't have enough, return to menu to load more onto card.
-            Console.WriteLine($"Not enough money in account for purchase. Load your card with more money " +
-                              $"at the main menu.");
-            
-        }
-        else
-        {
-            Console.WriteLine($"Not enough money in account for purchase and item is out of stock.");
-            
-        }
-    }
-
-    private static void GoLoadCard(string?[] serverInformation, string[] credentials)
-    {
-        Console.WriteLine("How much would you like to add onto your store card?");
-        Console.Write("::$");
-        int amount = getAmount();
-        StoreCommunicator.AddToCard(serverInformation, credentials, amount);
-        Console.WriteLine($"${amount} added to store card.");
-    }
-
-    private static int getAmount()
-    {
-        while (true)
-        {
-            string? stringAmount = Console.ReadLine();
-            try
+            Console.Write("Server Name: ");
+            string? serverName = Console.ReadLine();
+            if (serverName == "x")
             {
-                int amount = Convert.ToInt32(stringAmount);
-                
-                if (amount >= 1) return amount;
-                
-                Console.WriteLine("Enter a positive whole number please");
-                Console.Write("::$");
-                continue;
-
-                return amount;
+                serverName = "localhost";
             }
-            catch (Exception e)
+            if (!CheckEmpty(serverName)) continue;
+            
+
+            Console.Write("Database Name: ");
+            string? databaseName = Console.ReadLine();
+            if (databaseName == "x")
             {
-                Console.WriteLine("Enter a positive whole number please.");
-                Console.Write("::$");
+                databaseName = "storeDB";
             }
-        }
-    }
+            if (!CheckEmpty(databaseName)) continue;
+            
 
+            Console.Write("Database UserName: ");
+            string? databaseUsername = Console.ReadLine();
+            if (databaseUsername == "x")
+            {
+                databaseUsername = "root";
+            }
+            if (!CheckEmpty(databaseUsername)) continue;
+            
+
+            Console.Write("Database Password: ");
+            string? databasePassword = Console.ReadLine();
+            if (databasePassword == "x")
+            {
+                databasePassword = "cm117670";
+            }
+            if (!CheckEmpty(databasePassword)) continue;
+
+            string[] serverInformation = new string[] {serverName!, databaseName!, databaseUsername!, databasePassword!};
+            
+            results = StoreCommunicator.AttemptFirstConnection(serverInformation);
+            
+        }
+
+        return results;
+    }
+    
     private static string[] LoginOrSignup(string?[] serverInformation)
     {
         while (true)
@@ -171,10 +130,7 @@ public static class ClientProgram
             {
                 case "1":
                 {
-                    string[] loginResults = StoreCommunicator.LoginDatabase(serverInformation[0],
-                                                                    serverInformation[1],
-                                                                    serverInformation[2],
-                                                                    serverInformation[3]);
+                    string[] loginResults = StoreCommunicator.LoginDatabase(serverInformation[4]);
                     
                     if (loginResults[2] == "true") { return new[] {loginResults[0], loginResults[1]};}
                     
@@ -182,22 +138,12 @@ public static class ClientProgram
                     
                 }
                 case "2":
-                    //Code here for registering
-                    //Go back into "1" to properly login and return login credentials
-                    StoreCommunicator.RegisterDatabase(serverInformation[0],
-                        serverInformation[1],
-                        serverInformation[2],
-                        serverInformation[3]);
+                    StoreCommunicator.RegisterDatabase(serverInformation[4]);
                     break;
             }
-            
-            
-            
-            
-            
         }
     }
-
+    
     private static string MainMenuChoice()
     {
         while (true)
@@ -217,5 +163,93 @@ public static class ClientProgram
         
     }
 
+    private static void GoShopping(string[] serverInformation, string[] credentials)
+    {
+
+        string? productId = "";
+        
+        while (productId is "" or null)
+        {
+            StoreCommunicator.ShowShelf(serverInformation, credentials);
+            Console.WriteLine("Enter product ID of the product you want to buy.");
+            Console.Write("::");
+            productId = StoreCommunicator.GetUserProductId(serverInformation);
+        }
+
+        int itemPrice = StoreCommunicator.GetPrice(serverInformation[4], int.Parse(productId));
+        int balance = StoreCommunicator.GetUserBalance(serverInformation[4], credentials);
+        int stock = StoreCommunicator.GetStock(serverInformation[4], int.Parse(productId));
+        string itemName = StoreCommunicator.GetName(serverInformation[4], int.Parse(productId));
+
+        if (balance >= itemPrice && stock > 0)
+        {
+            int newBalance = balance - itemPrice;
+            StoreCommunicator.SetUserBalance(serverInformation[4], credentials, newBalance);
+            StoreCommunicator.RemoveFromStock(serverInformation, int.Parse(productId));
+            
+            Console.WriteLine($"${itemPrice} was removed from store account.");
+            Console.WriteLine($"{itemName} was purchased!");
+
+        }
+        else if (balance >= itemPrice && stock < 1)
+        {
+            
+            Console.WriteLine($"{itemName} is out of stock.");
+            
+        }
+        else if (balance < itemPrice && stock > 0)
+        {
+            
+            Console.WriteLine($"Not enough money in account for purchase. Load your card with more money " +
+                              $"at the main menu.");
+            
+        }
+        else
+        {
+            Console.WriteLine($"Not enough money in account for purchase and item is out of stock.");
+            
+        }
+    }
+
+    private static void GoLoadCard(string?[] serverInformation, string[] credentials)
+    {
+        Console.WriteLine("How much would you like to add onto your store card?");
+        Console.Write("::$");
+        int amount = AddMoneyAmount();
+        StoreCommunicator.AddToCard(serverInformation, credentials, amount);
+        Console.WriteLine($"${amount} added to store card.");
+    }
+
+    private static int AddMoneyAmount()
+    {
+        while (true)
+        {
+            string? stringAmount = Console.ReadLine();
+            try
+            {
+                int amount = Convert.ToInt32(stringAmount);
+                
+                if (amount >= 1) return amount;
+                
+                
+                Console.WriteLine("Enter a positive whole number please");
+                Console.Write("::$");
+
+            }
+            catch
+            {
+                Console.WriteLine("Enter a positive whole number please.");
+                Console.Write("::$");
+            }
+        }
+    }
     
+    private static bool CheckEmpty(string? entry)
+    {
+        if (!string.IsNullOrWhiteSpace(entry)) return true;
+        
+        Console.WriteLine("Empty entry detected, please make a valid entry");
+        return false;
+
+    }
 }
