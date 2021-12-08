@@ -8,7 +8,7 @@ public static class StoreCommunicator
 
 
                                                             //-Tests whether the database information actually connects,
-                                                            //returns successful server information or empty if failed
+                                                            //-returns successful server information or empty if failed
     public static string?[] AttemptFirstConnection(string[] serverInformation)
     {
         string myConnectionString =
@@ -44,11 +44,9 @@ public static class StoreCommunicator
     {
         
         Console.Write("Username: ");
-        //Gather user entry
         string? username = Console.ReadLine();
     
         Console.Write("Password: ");
-        //Gather user password
         string? password = Console.ReadLine();
 
         //Check with SQL Database if entry is valid. If not, send user back to login/register options
@@ -95,7 +93,7 @@ public static class StoreCommunicator
             return Array.Empty<string>();
     }
 
-    //Process to create user in database
+                                                                        //Process to create user in database
     public static void RegisterDatabase(string? myConnectionString)
     {
         while (true)
@@ -165,13 +163,9 @@ public static class StoreCommunicator
                 throw;
             }
     }
-
-
-
-
-
-
-    public static void ShowShelf( string?[] serverInformation,string[] credentials)
+    
+                                                                    //Prints all items in storeInfo database
+    public static void ShowShelf( string?[] serverInformation)
     {
         string myConnectionString = $"Server={serverInformation[0]};Database={serverInformation[1]};Uid={serverInformation[2]};Pwd={serverInformation[3]};";
 
@@ -211,7 +205,7 @@ public static class StoreCommunicator
             }
     }
     
-    //Process to get and return email from user
+                                                                //Process to get and return email from user
     private static string GetEmail()
     {
         while (true)
@@ -251,7 +245,8 @@ public static class StoreCommunicator
         int passwordRealPin = Convert.ToInt32(passwordPin);
         return passwordRealPin;
     }
-    //Gets balance from user in databse
+    
+                                                        //Gets balance from user in databse
     public static int GetUserBalance(string? myConnectionString, string[] credentials)
     {
         using MySqlConnection myConn = new MySqlConnection(myConnectionString);
@@ -270,6 +265,7 @@ public static class StoreCommunicator
                 return -1;
     }
 
+                                                        //Sets users balance to newBalance parameter
     public static void SetUserBalance(string? myConnectionString, string[] credentials, int newBalance)
     {
 
@@ -302,6 +298,7 @@ public static class StoreCommunicator
                 return -1;
     }
 
+                                                                        //Gets items name from storeInfo in database
     public static string GetName(string? myConnectionString, int productId)
     {
 
@@ -321,7 +318,7 @@ public static class StoreCommunicator
                 return "";
     }
     
-                                                        //Gets item stock from store in database
+                                                        //Gets item stock from storeInfo in database
     public static int GetStock(string? myConnectionString, int productId)
     {
         using MySqlConnection myConn = new MySqlConnection(myConnectionString);
@@ -340,6 +337,7 @@ public static class StoreCommunicator
                 return -1;
     }
 
+                                                                    //Takes one away from item in stockInfo database
     public static void RemoveFromStock(string[] serverInformation, int productId)
     {
         int currentStock = StoreCommunicator.GetStock(serverInformation[4], productId);
@@ -356,6 +354,7 @@ public static class StoreCommunicator
                     myCmd.ExecuteReader();
     }
 
+                                                                            //Gets desired productId from user
     public static string? GetUserProductId(string[] serverInformation)
     {
         string? id = Console.ReadLine();
@@ -365,7 +364,8 @@ public static class StoreCommunicator
         return id;
 
     }
-    
+        
+                                                                            //Gets all Ids from the storeInfo database
     private static List<string> GetAllIds(IReadOnlyList<string> serverInformation)
     {
         string myConnectionString = $"Server={serverInformation[0]};Database={serverInformation[1]};" +
@@ -386,10 +386,11 @@ public static class StoreCommunicator
                 return skuArray;
     }
 
+                                                                            //Adds amount parameter to users balance
     public static void AddToCard(string?[] serverInformation, string[] credentials, int amount)
     {
 
-        int amountToAdd = (StoreCommunicator.GetUserBalance(serverInformation[4], credentials)) + amount;
+        int amountToAdd = GetUserBalance(serverInformation[4], credentials) + amount;
 
         using MySqlConnection myConn = new MySqlConnection(serverInformation[4]);
             

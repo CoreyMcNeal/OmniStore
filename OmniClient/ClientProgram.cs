@@ -65,6 +65,7 @@ public static class ClientProgram
 
     }
 
+                                                //Gets information for initial connection to database
     private static string?[] SetupAndTestConnection()
     {
         
@@ -106,7 +107,7 @@ public static class ClientProgram
             }
             if (!CheckEmpty(databasePassword)) continue;
 
-            string[] serverInformation = new string[] {serverName!, databaseName!, databaseUsername!, databasePassword!};
+            string[] serverInformation = {serverName!, databaseName!, databaseUsername!, databasePassword!};
             
             results = StoreCommunicator.AttemptFirstConnection(serverInformation);
             
@@ -114,7 +115,7 @@ public static class ClientProgram
 
         return results;
     }
-    
+                                                            //Gathers login information to be used for future actions
     private static string[] LoginOrSignup(string?[] serverInformation)
     {
         while (true)
@@ -143,7 +144,7 @@ public static class ClientProgram
             }
         }
     }
-    
+                                                            //Gets a valid menu choice from the user
     private static string MainMenuChoice()
     {
         while (true)
@@ -162,7 +163,7 @@ public static class ClientProgram
         }
         
     }
-
+                                                                //Starts shopping UI process
     private static void GoShopping(string[] serverInformation, string[] credentials)
     {
 
@@ -170,7 +171,7 @@ public static class ClientProgram
         
         while (productId is "" or null)
         {
-            StoreCommunicator.ShowShelf(serverInformation, credentials);
+            StoreCommunicator.ShowShelf(serverInformation);
             Console.WriteLine("Enter product ID of the product you want to buy.");
             Console.Write("::");
             productId = StoreCommunicator.GetUserProductId(serverInformation);
@@ -210,16 +211,19 @@ public static class ClientProgram
             
         }
     }
-
+                                                                        //Starts the loading card UI process
     private static void GoLoadCard(string?[] serverInformation, string[] credentials)
     {
         Console.WriteLine("How much would you like to add onto your store card?");
         Console.Write("::$");
+        
         int amount = AddMoneyAmount();
         StoreCommunicator.AddToCard(serverInformation, credentials, amount);
+        
         Console.WriteLine($"${amount} added to store card.");
     }
-
+    
+                                                                        //Gathers a valid amount to add to store account
     private static int AddMoneyAmount()
     {
         while (true)
@@ -244,6 +248,7 @@ public static class ClientProgram
         }
     }
     
+                                                                        //Checks if entry was empty
     private static bool CheckEmpty(string? entry)
     {
         if (!string.IsNullOrWhiteSpace(entry)) return true;
