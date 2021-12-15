@@ -52,12 +52,13 @@ public static class ClientProgram
                     continue;
 
                 case "2":
-                    
+
                     GoLoadCard(serverInformation, credentials);
                     continue;
             
                 case "3":
                     break;
+                
             }
 
             break;
@@ -188,6 +189,7 @@ public static class ClientProgram
             StoreCommunicator.SetUserBalance(serverInformation[4], credentials, newBalance);
             StoreCommunicator.RemoveFromStock(serverInformation, int.Parse(productId));
             
+            Console.WriteLine();
             Console.WriteLine($"${itemPrice} was removed from store account.");
             Console.WriteLine($"{itemName} was purchased!");
 
@@ -220,6 +222,7 @@ public static class ClientProgram
         int amount = AddMoneyAmount();
         StoreCommunicator.AddToCard(serverInformation, credentials, amount);
         
+        Console.WriteLine();
         Console.WriteLine($"${amount} added to store card.");
     }
     
